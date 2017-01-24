@@ -1,0 +1,16 @@
+{
+    "manifest_version": 2,
+
+    "name": "Vision Devtools",
+    "description": "Test",
+    "version": "0.0.1",
+    "browser_action": {
+        "default_icon": "./assets/logo.png",
+        "default_popup": "popup.html",
+        "default_title": "Vision Devtools"
+    },
+    "permissions": [
+        "activeTab"
+    ],
+    "devtools_page": "devtools.html"
+}
