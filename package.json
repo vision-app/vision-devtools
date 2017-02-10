@@ -1,0 +1,9 @@
+{
+  "name": "vision-devtools",
+  "version": "0.0.1",
+  "description": "Test",
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "eslint-config-rgui": "^1.0.0"
+  }
+}

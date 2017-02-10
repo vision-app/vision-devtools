@@ -1,0 +1,11 @@
+{
+    "extends": "rgui",
+    "env": {
+        "browser": true,
+    },
+    "globals": {
+        "bridge": true,
+        "chrome": true,
+        "localStorage": true
+    }
+}

@@ -12,5 +12,11 @@
     "permissions": [
         "activeTab"
     ],
-    "devtools_page": "devtools.html"
+    "devtools_page": "backend.html",
+
+    "content_scripts": [{
+        "matches": ["<all_urls>"],
+        "js": ["src/content.js"],
+        "run_at": "document_idle"
+    }]
 }
