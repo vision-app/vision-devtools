@@ -4,19 +4,29 @@
     "name": "Vision Devtools",
     "description": "Test",
     "version": "0.0.1",
+    "icons": {
+        "16": "assets/logo-256.png",
+        "48": "assets/logo-256.png",
+        "128": "assets/logo-256.png"
+    },
     "browser_action": {
-        "default_icon": "./assets/logo.png",
-        "default_popup": "popup.html",
+        "default_icon": "assets/logo-disabled-256.png",
+        "default_popup": "entry/popup.html",
         "default_title": "Vision Devtools"
     },
     "permissions": [
-        "activeTab"
+        "http://*/*",
+        "https://*/*",
+        "file://*"
     ],
-    "devtools_page": "backend.html",
-
+    "background": {
+        "scripts": ["entry/background.js"],
+        "persistent": false
+    },
+    "devtools_page": "entry/devtools-background.html",
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["src/content.js"],
+        "js": ["entry/content.js"],
         "run_at": "document_idle"
     }]
 }

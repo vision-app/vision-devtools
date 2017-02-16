@@ -21,7 +21,7 @@ const detact = function (win) {
                 vueDetected: true,
             }, '*');
         }
-    });
+    }, 100);
 };
 
 /**

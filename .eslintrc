@@ -2,6 +2,8 @@
     "extends": "rgui",
     "env": {
         "browser": true,
+        "commonjs": true,
+        "node": true,
     },
     "globals": {
         "bridge": true,
