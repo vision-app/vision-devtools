@@ -1,27 +1,10 @@
 // this script is injected into every page.
 
-const inject = function (func) {
-    // inject the hook
+const injectFunction = function (func) {
     const script = document.createElement('script');
     script.textContent = ';(' + func.toString() + ')(window)';
     document.documentElement.appendChild(script);
     script.parentNode.removeChild(script);
-};
-
-const detact = function (win) {
-    setTimeout(() => {
-        const all = document.querySelectorAll('*');
-        const el = Array.prototype.find.call(all, (e) => e.__vue__);
-        if (el) {
-            let Vue = el.__vue__.constructor;
-            while (Vue.super)
-                Vue = Vue.super;
-            win.postMessage({
-                devtoolsEnabled: Vue.config.devtools,
-                vueDetected: true,
-            }, '*');
-        }
-    }, 100);
 };
 
 /**
@@ -83,12 +66,29 @@ const installHook = function (window) {
         },
     };
 
-    hook.once('init', (Vue) => hook.Vue = Vue);
-    hook.once('vuex:init', (store) => hook.store = store);
+    // hook.once('init', (Vue) => hook.Vue = Vue);
+    // hook.once('vuex:init', (store) => hook.store = store);
 
     Object.defineProperty(window, '__VISION_DEVTOOLS_GLOBAL_HOOK__', {
         get() { return hook; },
     });
+};
+
+const detact = function (win) {
+    setTimeout(() => {
+        const all = document.querySelectorAll('*');
+        const el = Array.prototype.find.call(all, (e) => e.__vue__);
+        if (el) {
+            let Vue = el.__vue__.constructor;
+            while (Vue.super)
+                Vue = Vue.super;
+            window.__VISION_DEVTOOLS_GLOBAL_HOOK__.Vue = Vue;
+            win.postMessage({
+                devtoolsEnabled: Vue.config.devtools,
+                vueDetected: true,
+            }, '*');
+        }
+    }, 100);
 };
 
 window.addEventListener('message', (e) => {
@@ -96,5 +96,5 @@ window.addEventListener('message', (e) => {
         chrome.runtime.sendMessage(e.data);
 });
 
-inject(installHook);
-inject(detact);
+injectFunction(installHook);
+injectFunction(detact);

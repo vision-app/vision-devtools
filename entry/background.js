@@ -5,40 +5,67 @@ const ports = {};
 
 const isNumeric = (str) => str === +str + '';
 
-const installProxy = function (tabId) {
-    chrome.tabs.executeScript(tabId, { file: 'entry/proxy.js' }, (res) => {
+const installProxy = function (id) {
+    chrome.tabs.executeScript(id, { file: 'entry/proxy.js' }, (res) => {
         if (!res)
-            ports[tabId].devtools.postMessage('proxy-fail');
+            ports[id].devtools.postMessage('proxy-fail');
         else
-            console.info('injected proxy to tab', tabId);
+            console.info('injected proxy to tab', id);
     });
 };
 
-chrome.runtime.onConnect.addListener((port) => {
-    console.log('port', port);
+const doublePipe = function (id, a, b) {
+    const onAMessage = function (message) {
+        if (message.event === 'log')
+            return console.info('tab ' + id, message.payload);
+        console.info('devtools -> backend', message);
+        b.postMessage(message);
+    };
+    a.onMessage.addListener(onAMessage);
 
-    let tab;
-    let name;
+    const onBMessage = function (message) {
+        if (message.event === 'log')
+            return console.info('tab ' + id, message.payload);
+        console.info('backend -> devtools', message);
+        a.postMessage(message);
+    };
+    b.onMessage.addListener(onBMessage);
+
+    const shutdown = function () {
+        console.info('tab ' + id, 'disconnected.');
+        a.onMessage.removeListener(onAMessage);
+        b.onMessage.removeListener(onBMessage);
+        a.disconnect();
+        b.disconnect();
+        ports[id] = null;
+    };
+    a.onDisconnect.addListener(shutdown);
+    b.onDisconnect.addListener(shutdown);
+    console.info('tab ' + id, 'connected.');
+};
+
+chrome.runtime.onConnect.addListener((port) => {
+    let id, type;
     if (isNumeric(port.name)) {
-        tab = port.name;
-        name = 'devtools';
-        installProxy(+port.name);
+        id = port.name;
+        type = 'devtools';
+        installProxy(+id);
     } else {
-        tab = port.sender.tab.id;
-        name = 'backend';
+        id = port.sender.tab.id;
+        type = 'backend';
     }
 
-    if (!ports[tab]) {
-        ports[tab] = {
+    if (!ports[id]) {
+        ports[id] = {
             devtools: null,
             backend: null,
         };
     }
 
-    ports[tab][name] = port;
+    ports[id][type] = port;
 
-    // if (ports[tab].devtools && ports[tab].backend)
-    //     doublePipe(tab, ports[tab].devtools, ports[tab].backend);
+    if (ports[id].devtools && ports[id].backend)
+        doublePipe(id, ports[id].devtools, ports[id].backend);
 });
 
 chrome.runtime.onMessage.addListener((req, sender) => {

@@ -19,6 +19,9 @@
         "https://*/*",
         "file://*"
     ],
+    "web_accessible_resources": [
+        "build/backend.js"
+    ],
     "background": {
         "scripts": ["entry/background.js"],
         "persistent": false

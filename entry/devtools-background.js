@@ -7,14 +7,14 @@ let checkCount = 0;
 
 const createPanelIfHasVue = function () {
     chrome.devtools.inspectedWindow.eval(
-        '!!(window.__VUE_DEVTOOLS_GLOBAL_HOOK__.Vue)',
+        '!!(window.__VISION_DEVTOOLS_GLOBAL_HOOK__.Vue)',
         (hasVue) => {
             if (!hasVue) {
                 checkCount++;
                 return checkCount < 10 && setTimeout(createPanelIfHasVue, 1000);
             }
 
-            chrome.devtools.panels.create('Vision', 'assets/logo-256.png', 'devtools/index.html', (panel) => { /* panel loaded */ });
+            chrome.devtools.panels.create('Vision', 'assets/logo-256.png', 'src/devtools/index.html', (panel) => { /* panel loaded */ });
         }
     );
 };
