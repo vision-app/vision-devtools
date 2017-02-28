@@ -2,6 +2,7 @@ import Vue from 'vue';
 import App from './app.vue';
 import store from './store';
 import Bridge from '../bridge';
+import * as _ from '../util';
 
 /**
  * Inject a globally evaluated script, in the same context with the actual user app.
@@ -25,6 +26,26 @@ script.parentNode.removeChild(script);
 
 let app;
 const devtools = {
+    start() {
+        process.env.NODE_ENV === 'production' && this.connect();
+        app = new App({
+            store,
+        }).$mount('#container');
+
+        if (process.env.NODE_ENV !== 'production') {
+            store.commit('FLUSH', {
+                instances: [
+                    { id: 1, text: 'node1' },
+                    { id: 2, text: 'node2', children: [
+                        { id: 123, text: 'node21' },
+                        { id: 234, text: 'node22' },
+                    ] },
+                ],
+            });
+        }
+        // onReload
+        // chrome.devtools.network.onNavigated.addListener(() => app && app.$destroy());
+    },
     /**
      * Inject backend, connect to background, and send back the bridge.
      */
@@ -52,18 +73,11 @@ const devtools = {
             this.init();
         });
     },
-    start() {
-        this.connect();
-        app = new App({
-            store,
-        }).$mount('#container');
-
-        // onReload
-        // chrome.devtools.network.onNavigated.addListener(() => app && app.$destroy());
-    },
     init() {
-        bridge.on('flush', () =>
-            console.log('flushed!!!'));
+        bridge.on('flush', (payload) => {
+            console.log(payload = _.parse(payload));
+            store.commit('FLUSH', payload);
+        });
     },
 };
 devtools.start();

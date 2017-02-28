@@ -2,7 +2,7 @@
 // when the Vision Devtools panel is activated.
 
 import Bridge from '../bridge';
-import _ from '../util';
+import * as inst from './inst';
 
 let bridge;
 // hook should have been injected before this executes.
@@ -49,57 +49,7 @@ const backend = {
         bridge.log('backend ready.');
         bridge.send('ready', hook.Vue.version);
         console.info('[vision-devtools] Ready. Detected Vue v' + hook.Vue.version);
-        this.scan();
-    },
-    rootInstances: [],
-    /**
-     * DOM walk helper
-     * @QUESTION: Why not use element
-     * @param {NodeList} nodes
-     * @param {Function} fn
-     */
-    walk(node, fn) {
-        if (!node.children)
-            return;
-        Array.prototype.forEach.call(node.children, (node) =>
-            !fn(node) && this.walk(node, fn));
-    },
-    /**
-     * Scan the page for root level Vue instances.
-     * @QUESTION: What is fragment instance
-     */
-    scan() {
-        this.rootInstances.length = 0;
-        let fragment = null;
-        this.walk(document, (node) => {
-            if (fragment) {
-                if (node === fragment._fragmentEnd)
-                    fragment = null;
-                else
-                    return true;
-            }
-
-            const instance = node.__vue__;
-            if (instance) {
-                if (instance._isFragment)
-                    fragment = instance;
-                this.rootInstances.push(instance);
-                return true;
-            }
-        });
-        this.flush();
-    },
-    /**
-     * Called on every Vue.js batcher flush cycle.
-     * Capture current component tree structure and the state
-     * of the current inspected instance (if present) and
-     * send it to the devtools.
-     */
-    flush() {
-        // const payload = stringify({
-        //
-        // })
-        bridge.send('flush', 'flushed');
+        inst.init(bridge);
     },
 };
 backend.start();

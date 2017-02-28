@@ -7,8 +7,12 @@ const store = new Vuex.Store({
     state: {
         message: '',
         tab: 'components',
+        instances: undefined,
     },
     mutations: {
+        FLUSH(state, payload) {
+            state.instances = payload.instances; // Object.freeze(payload.instances);
+        },
         SHOW_MESSAGE(state, message) {
             state.message = message;
         },
