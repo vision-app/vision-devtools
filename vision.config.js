@@ -5,9 +5,9 @@ module.exports = {
             backend: './src/backend/index.js',
         },
         resolve: {
-            REMAIN: true,
+            REST_PROPS: true,
             alias: {
-                REMAIN: true,
+                REST_PROPS: true,
                 src: __dirname + '/src',
             },
         },

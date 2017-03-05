@@ -41,6 +41,7 @@ const doublePipe = function (id, a, b) {
     };
     a.onDisconnect.addListener(shutdown);
     b.onDisconnect.addListener(shutdown);
+
     console.info('tab ' + id, 'connected.');
 };
 

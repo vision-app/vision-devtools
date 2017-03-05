@@ -1,9 +1,10 @@
 <template>
 <div :class="$style.root">
-    <div :class="$style.item" :selected="this.$treeRoot.selected === node" @click="select">
+    <div :class="$style.item" :selected="this.$treeRoot.selected === node"
+        @click="select" @mouseenter="enterNode" @mouseleave="leaveNode">
         <div :class="$style.back"></div>
         <i :class="$style.icon"></i>
-        <div :class="$style.text">{{ node.text || node.name }}</div>
+        <div :class="$style.text">{{ node[$treeRoot.nkey] }}</div>
     </div>
     <slot />
 </div>
@@ -23,6 +24,12 @@ export default {
                 selected: this.node,
             });
         },
+        enterNode(e) {
+            this.$treeRoot.$emit('enter-node', this.node, e);
+        },
+        leaveNode(e) {
+            this.$treeRoot.$emit('leave-node', this.node, e);
+        }
     }
 };
 </script>

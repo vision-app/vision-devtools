@@ -7,11 +7,17 @@ const store = new Vuex.Store({
     state: {
         message: '',
         tab: 'components',
-        instances: undefined,
+        rootInstance: null,
+        contextVNode: {},
+        inspectedInstance: null,
     },
     mutations: {
         FLUSH(state, payload) {
-            state.instances = payload.instances; // Object.freeze(payload.instances);
+            state.rootInstance = Object.freeze(payload.rootInstance);
+            state.inspectedInstance = Object.freeze(payload.inspectedInstance);
+        },
+        SELECT_CONTEXT(state, vnode) {
+            state.contextVNode = vnode;
         },
         SHOW_MESSAGE(state, message) {
             state.message = message;

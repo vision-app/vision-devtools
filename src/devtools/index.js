@@ -24,27 +24,62 @@ script.parentNode.removeChild(script);
     });
 };
 
+const mock = {
+    listener: undefined,
+    addListener(fn) {
+        this.listener = fn;
+    },
+    post(payload) {
+        this.listener({
+            event: 'post',
+            payload,
+        });
+    },
+};
+
+window.bridge = new Bridge({
+    listen(fn) {
+        mock.addListener(fn);
+    },
+    send(data) {
+        console.info('bridge send:', data);
+    },
+});
+
 let app;
 const devtools = {
     start() {
-        process.env.NODE_ENV === 'production' && this.connect();
+        if (process.env.NODE_ENV === 'production')
+            this.connect();
+
         app = new App({
             store,
         }).$mount('#container');
 
         if (process.env.NODE_ENV !== 'production') {
             store.commit('FLUSH', {
-                instances: [
-                    { id: 1, text: 'node1' },
-                    { id: 2, text: 'node2', children: [
-                        { id: 123, text: 'node21' },
-                        { id: 234, text: 'node22' },
-                    ] },
-                ],
+                rootInstance: { id: 2, name: 'node2', children: [
+                        { id: 123, name: 'node21' },
+                        { id: 234, name: 'node22' },
+                ] },
+            });
+
+            store.commit('SELECT_CONTEXT', {
+                type: 'component',
+                content: '<root>',
+                children: [{
+                    type: 'text',
+                    text: 'abcde',
+                    content: '"abcde"',
+                }, {
+                    type: 'element',
+                    content: '<div>',
+                }, {
+                    type: 'component',
+                    content: '<com>',
+                }],
             });
         }
-        // onReload
-        // chrome.devtools.network.onNavigated.addListener(() => app && app.$destroy());
     },
     /**
      * Inject backend, connect to background, and send back the bridge.
@@ -75,9 +110,21 @@ const devtools = {
     },
     init() {
         bridge.on('flush', (payload) => {
-            console.log(payload = _.parse(payload));
+            payload = _.parse(payload);
             store.commit('FLUSH', payload);
+            // @DEBUG
+            const vnode = payload.rootInstanceVNode.children.find((vnode) => vnode.type === 'component');
+            store.commit('SELECT_CONTEXT', vnode.vnode);
         });
     },
 };
+
+if (process.env.NODE_ENV === 'production') {
+    // onReload
+    chrome.devtools.network.onNavigated.addListener(() => {
+        app && app.$destroy();
+        bridge.removeAllListeners();
+        devtools.start();
+    });
+}
 devtools.start();

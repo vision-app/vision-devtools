@@ -29,7 +29,11 @@
     "devtools_page": "entry/devtools-background.html",
     "content_scripts": [{
         "matches": ["<all_urls>"],
-        "js": ["entry/content.js"],
+        "js": ["entry/hook.js"],
+        "run_at": "document_start"
+    }, {
+        "matches": ["<all_urls>"],
+        "js": ["entry/detactor.js"],
         "run_at": "document_idle"
     }]
 }

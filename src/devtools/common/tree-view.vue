@@ -15,7 +15,13 @@ import { mapComponents } from 'src/util';
 export default {
     name: 'v-tree-view',
     components: mapComponents([TreeList]),
-    props: ['tree'],
+    props: {
+        tree: Array,
+        nkey: {
+            type: String,
+            default: 'text',
+        },
+    },
     data() {
         return {
             selected: undefined,

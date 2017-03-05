@@ -42,8 +42,7 @@ const backend = {
         if (hook.Vue)
             this.connect();
         else
-            alert('!!hook.Vue === false');
-        // hook.once('init', connect);
+            hook.once('init', this.connect);
     },
     connect() {
         bridge.log('backend ready.');
