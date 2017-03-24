@@ -2,11 +2,9 @@
 <div :class="$style.root">
     <div :class="$style.body">
         <div :class="$style.sside">
-            <v-tree-view nkey="name" :tree="instances" @enter-node="enterNode" @leave-node="leaveNode">
-                <v-test />
-                <v-test />
-                <v-test />
-            </v-tree-view>
+            <v-tree-view nkey="name" :tree="ctors" />
+            <!-- v-tree-view nkey="name" :tree="instances" @enter-node="enterNode" @leave-node="leaveNode">
+            </v-tree-view -->
         </div>
         <div :class="$style.side">
             <v-tree-view nkey="content" :tree="contextVNode.children" />
@@ -36,6 +34,7 @@ export default Vue.extend({
     computed: mapState({
         instances: (state) => state.rootInstance ? [state.rootInstance] : [],
         contextVNode: 'contextVNode',
+        ctors: (state) => Object.keys(state.ctors).map((key) => state.ctors[key]),
     }),
     methods: {
         enterNode(node) {

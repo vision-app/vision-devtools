@@ -57,6 +57,18 @@ const devtools = {
         }).$mount('#container');
 
         if (process.env.NODE_ENV !== 'production') {
+            store.commit('SCAN_CTORS', {
+                'data-v-61eddd13': {
+                    file: 'ewwewge',
+                    id: 'data-v-61eddd13',
+                    name: 'v-circular-progress',
+                },
+                'data-v-14467426': {
+                    file: 'aff',
+                    id: 'data-v-14467426',
+                    name: 'v-linear-progress',
+                },
+            });
             store.commit('FLUSH', {
                 rootInstance: { id: 2, name: 'node2', children: [
                         { id: 123, name: 'node21' },
@@ -109,6 +121,10 @@ const devtools = {
         });
     },
     init() {
+        bridge.on('scan-ctors', (ctors) => {
+            store.commit('SCAN_CTORS', ctors);
+        });
+
         bridge.on('flush', (payload) => {
             payload = _.parse(payload);
             store.commit('FLUSH', payload);

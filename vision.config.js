@@ -1,4 +1,5 @@
 module.exports = {
+    babel: false,
     webpack: {
         entry: {
             devtools: './src/devtools/index.js',

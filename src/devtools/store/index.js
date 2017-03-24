@@ -10,8 +10,12 @@ const store = new Vuex.Store({
         rootInstance: null,
         contextVNode: {},
         inspectedInstance: null,
+        ctors: {},
     },
     mutations: {
+        SCAN_CTORS(state, payload) {
+            state.ctors = payload;
+        },
         FLUSH(state, payload) {
             state.rootInstance = Object.freeze(payload.rootInstance);
             state.inspectedInstance = Object.freeze(payload.inspectedInstance);

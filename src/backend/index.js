@@ -3,6 +3,7 @@
 
 import Bridge from '../bridge';
 import * as inst from './inst';
+import * as ctor from './ctor';
 
 let bridge;
 // hook should have been injected before this executes.
@@ -48,6 +49,7 @@ const backend = {
         bridge.log('backend ready.');
         bridge.send('ready', hook.Vue.version);
         console.info('[vision-devtools] Ready. Detected Vue v' + hook.Vue.version);
+        ctor.init(bridge);
         inst.init(bridge);
     },
 };
